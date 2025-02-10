@@ -1,35 +1,37 @@
 import { findAssetById, insertAsset, updateAsset, deleteAsset } from '../services/assetServices.js';
+import { handleError } from '../errorHandler/errorHandler.js';
+import { handleSuccess } from '../errorHandler/errorHandler.js';
 
-//get an asset
 export async function getAssetById(req, res) {
     const assetId = req.params.id;
 
     if (!assetId) {
-        return res.status(400).json({ message: "Asset ID is required" });
+        return handleError(res, new Error("Asset ID is required"), 400, "Asset ID is required");
     }
 
     try {
         const asset = await findAssetById(assetId);
 
         if (!asset) {
-            return res.status(404).json({ message: "Asset not found" });
+            return handleError(res, new Error("Asset not found"), 404, "Asset not found");
         }
 
         res.json(asset);
     } catch (err) {
-        console.error('Error fetching asset:', err.message);
-        res.status(500).json({ error: 'Server Error' });
+        handleError(res, err);
     }
 }
+
+
 
 //Controller to insert a new asset
 export async function createAsset(req, res) {
     try {
         const newAsset = await insertAsset(req.body);
-        res.status(201).json({ message: "Asset added successfully", data: newAsset });
+        handleSuccess(res, newAsset, 201, "Asset added successfully");
     } catch (err) {
         console.error('Error adding asset:', err.message);
-        res.status(500).json({ error: 'Server Error' });
+        handleError(res, err);
     }
 }
 
@@ -42,13 +44,13 @@ export async function updateAssetById(req, res) {
         const updatedAsset = await updateAsset(assetId, req.body);
 
         if (!updatedAsset) {
-            return res.status(404).json({ message: "Asset not found" });
+            return handleError(res, new Error("Asset not found"), 404, "Asset not found");
         }
 
-        res.json({ message: "Asset updated successfully", data: updatedAsset });
+        handleSuccess(res, updatedAsset, 201, "Asset updated successfully");
     } catch (err) {
         console.error('Error updating asset:', err.message);
-        res.status(500).json({ error: 'Server Error' });
+        handleError(res, err);
     }
 }
 
@@ -60,13 +62,11 @@ export async function deleteAssetById(req, res) {
         const deletedAsset = await deleteAsset(assetId);
 
         if (!deletedAsset) {
-            return res.status(404).json({ message: "Asset not found or already deleted" });
+            return handleError(res, new Error("Asset not found or already deleted"), 404, "Asset not found or already deleted");
         }
 
-        res.json({ message: "Asset deleted successfully" });
+        handleSuccess(res, deletedAsset, 200, "Asset deleted successfully"); 
     } catch (err) {
-        console.error('Error deleting asset:', err.message);
-        res.status(500).json({ error: 'Server Error' });
+        handleError(res, err); 
     }
 }
-

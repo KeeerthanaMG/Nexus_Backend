@@ -18,6 +18,7 @@ db.connectDB();
 
 // API Routes
 app.use('/api/assets', assetRoutes);
+// app.use('/api/software', softwareroutes);
 
 // Start Server
 app.listen(port, () => {
