@@ -69,3 +69,4 @@ export async function deleteAssetById(req, res) {
         res.status(500).json({ error: 'Server Error' });
     }
 }
+
