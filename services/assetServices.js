@@ -1,9 +1,7 @@
-import db from '../config/db.js';
-const { client } = db;
- // Named imports
- // Import default export (the object)
- // Destructure the connectDB from the imported object
-// Assuming client is a named export
+import db from '../config/db.js'; // Assuming db.js exports the database client
+import queries from '../queries/assetQueries.js';
+
+const { client } = db; // Extract the client from db.js
 
 // Function to view more asset details
 export async function findAssetById(assetId) {
