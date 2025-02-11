@@ -4,6 +4,7 @@ import { config as _config } from 'dotenv';
 import db from './config/db.js';
 import assetRoutes from './routes/assetRoutes.js';
 
+
 _config();  // Load environment variables
 
 const app = express();

@@ -1,15 +1,19 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
-dotenv.config();
+
 const { Client } = pkg;
+ // This will print all environment variables loaded from the .env file
+
+dotenv.config({ path: './environment/.env' })
 
 const client = new Client({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'postgres',
-    port: process.env.DB_PORT || 5432,
-    password: process.env.DB_PASSWORD || 'jayakanth',
-    database: process.env.DB_NAME || 'asset'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER, 
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
 });
+
 
 // Connect to PostgreSQL
 const connectDB = async () => {
