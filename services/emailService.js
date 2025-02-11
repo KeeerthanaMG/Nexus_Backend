@@ -17,7 +17,7 @@ export const sendEmailNotification = async (to, subject, message) => {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to,
+            to: process.env.EMAIL_REP,
             subject,
             text: message
         };
