@@ -6,6 +6,8 @@ import assetRoutes from './routes/assetRoutes.js';
 import softwareRoutes from './routes/softwareRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import './cron/cronJobs.js';
+
 
 
 
@@ -31,7 +33,6 @@ app.use('/api/assets', assetRoutes);
 app.use('/api/software', softwareRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
-
 app.use('/api/maintenance', maintenanceRoutes);
 
 
