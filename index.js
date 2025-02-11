@@ -5,6 +5,7 @@ import db from './config/db.js';
 import assetRoutes from './routes/assetRoutes.js';
 import softwareRoutes from './routes/softwareRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import maintenanceRoutes from './routes/maintenanceRoutes.js';
 
 _config();  // Load environment variables
 
@@ -24,6 +25,7 @@ db.connectDB().catch((err) => {
 app.use('/api/assets', assetRoutes);
 app.use('/api/software', softwareRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 
 // Start Server
 app.listen(port, () => {
