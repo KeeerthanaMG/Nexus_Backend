@@ -7,11 +7,8 @@ import softwareRoutes from './routes/softwareRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import './cron/cronJobs.js';
-
-
-
-
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
+import countRoutes from './routes/countRoutes.js';
 
 
 _config();  // Load environment variables
@@ -34,6 +31,7 @@ app.use('/api/software', softwareRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/count', countRoutes);
 
 
 // Start Server

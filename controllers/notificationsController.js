@@ -33,7 +33,7 @@ export const fetchNotifications = async (req, res) => {
         res.json({ success: true, notifications });
     } catch (error) {
         console.error('❌ Error in fetchNotifications:', error.message);
-        res.status(500).json({ success: false, message: "Error fetching notifications" });
+       return handleError(res, new Error("Error fetching notifications"), 500, "Error fetching notifications");
     }
 };
 
@@ -76,6 +76,6 @@ export const fetchMaintenanceNotifications = async (req, res) => {
         res.json({ success: true, notifications });
     } catch (error) {
         console.error('❌ Error in fetchMaintenanceNotifications:', error.message);
-        res.status(500).json({ success: false, message: "Error in fetching maintenance notification" });
+        return handleError(res, new Error("Error in fetching maintenance notifications"), 500, "Error in fetching maintenance notifications");
     }
 };
