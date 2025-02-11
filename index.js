@@ -4,6 +4,7 @@ import { config as _config } from 'dotenv';
 import db from './config/db.js';
 import assetRoutes from './routes/assetRoutes.js';
 import softwareRoutes from './routes/softwareRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 _config();  // Load environment variables
 
@@ -22,6 +23,7 @@ db.connectDB().catch((err) => {
 // API Routes
 app.use('/api/assets', assetRoutes);
 app.use('/api/software', softwareRoutes);
+app.use('/api/users', userRoutes);
 
 // Start Server
 app.listen(port, () => {
