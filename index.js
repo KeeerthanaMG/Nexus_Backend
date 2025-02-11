@@ -5,9 +5,13 @@ import db from './config/db.js';
 import assetRoutes from './routes/assetRoutes.js';
 import softwareRoutes from './routes/softwareRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+<<<<<<< HEAD
 import notificationRoutes from './routes/notificationRoutes.js';
 
 
+=======
+import maintenanceRoutes from './routes/maintenanceRoutes.js';
+>>>>>>> 43337b5c9e917f427b0980ad7068aed7229dd0ac
 
 _config();  // Load environment variables
 
@@ -27,7 +31,11 @@ db.connectDB().catch((err) => {
 app.use('/api/assets', assetRoutes);
 app.use('/api/software', softwareRoutes);
 app.use('/api/users', userRoutes);
+<<<<<<< HEAD
 app.use('/api/notifications', notificationRoutes);
+=======
+app.use('/api/maintenance', maintenanceRoutes);
+>>>>>>> 43337b5c9e917f427b0980ad7068aed7229dd0ac
 
 // Start Server
 app.listen(port, () => {
