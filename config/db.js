@@ -1,36 +1,37 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
 
-const { Client } = pkg;
- // This will print all environment variables loaded from the .env file
+dotenv.config({ path: './environment/.env' });
 
-dotenv.config({ path: './environment/.env' })
+const { Pool } = pkg;
 
-const client = new Client({
+// Create a new pool instance
+const pool = new Pool({
     host: process.env.DB_HOST,
-    user: process.env.DB_USER, 
+    user: process.env.DB_USER,
     port: process.env.DB_PORT,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
 });
 
-
-// Connect to PostgreSQL
+// Connect to PostgreSQL (optional)
 const connectDB = async () => {
     try {
-        await client.connect();
+        const client = await pool.connect();
         console.log('Connected to PostgreSQL!');
+        client.release(); // Release the client back to the pool
     } catch (err) {
         console.error('Error connecting to PostgreSQL:', err.message);
         process.exit(1);
     }
 };
 
+// Graceful shutdown
 process.on('SIGINT', async () => {
-    await client.end();
+    await pool.end();
     console.log('Database connection closed.');
     process.exit(0);
 });
 
-// Default export
-export default { client, connectDB };
+// Export pool instance instead of client
+export default { pool, connectDB };

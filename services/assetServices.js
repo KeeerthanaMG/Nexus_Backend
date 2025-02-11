@@ -1,12 +1,12 @@
-import db from '../config/db.js'; // Assuming db.js exports the database client
+import db from '../config/db.js'; // Import the database pool
 import queries from '../queries/assetQueries.js';
 
-const { client } = db; // Extract the client from db.js
+const { pool } = db; // Extract the pool from db.js
 
 // Function to view more asset details
 export async function findAssetById(assetId) {
     try {
-        const result = await client.query(queries.findAssetById, [assetId]);
+        const result = await pool.query(queries.findAssetById, [assetId]);
         return result.rows.length > 0 ? result.rows[0] : null;
     } catch (err) {
         console.error('Error executing findAssetById query:', err);
@@ -44,7 +44,7 @@ export async function insertAsset(assetData) {
     ];
 
     try {
-        const result = await client.query(queries.insertAsset, values);
+        const result = await pool.query(queries.insertAsset, values);
         return result.rows[0];
     } catch (err) {
         console.error('Error inserting asset:', err);
@@ -82,7 +82,7 @@ export async function updateAsset(assetId, assetData) {
     ];
 
     try {
-        const result = await client.query(queries.updateAsset, values);
+        const result = await pool.query(queries.updateAsset, values);
         return result.rowCount > 0 ? result.rows[0] : null;
     } catch (err) {
         console.error('Error executing updateAsset query:', err);
@@ -93,7 +93,7 @@ export async function updateAsset(assetId, assetData) {
 // Function to delete an asset
 export async function deleteAsset(assetId) {
     try {
-        const result = await client.query(queries.deleteAsset, [assetId]);
+        const result = await pool.query(queries.deleteAsset, [assetId]);
         return result.rowCount > 0 ? result.rows[0] : null;
     } catch (err) {
         console.error('Error executing deleteAsset query:', err);

@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config as _config } from 'dotenv';
 import db from './config/db.js';
 import assetRoutes from './routes/assetRoutes.js';
+import softwareRoutes from './routes/softwareRoutes.js';
 
 _config();  // Load environment variables
 
@@ -14,11 +15,13 @@ app.use(cors());
 app.use(express.json());  
 
 // Connect to Database
-db.connectDB(); 
+db.connectDB().catch((err) => {
+    console.error("Database connection failed:", err);
+});
 
 // API Routes
 app.use('/api/assets', assetRoutes);
-// app.use('/api/software', softwareroutes);
+app.use('/api/software', softwareRoutes);
 
 // Start Server
 app.listen(port, () => {
