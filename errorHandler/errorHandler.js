@@ -5,5 +5,8 @@ export function handleError(res, err, statusCode = 500, message = "Server Error"
 
 export function handleSuccess(res, data, statusCode = 200, message = "Success") {
     return res.status(statusCode).json({ message, data });
+
 }
+
+
 

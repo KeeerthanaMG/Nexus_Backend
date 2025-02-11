@@ -1,0 +1,24 @@
+import db from '../config/db.js'; // Import the default object from db.js
+const { pool } = db; // Extract pool from the default export
+import dayjs from 'dayjs'; // Date handling library
+import { GET_EXPIRING_LICENSES_QUERY } from '../queries/notificationsQueries.js'; // Ensure the query is correctly imported
+
+// Function to fetch licenses expiring in the next 30 days
+export const getExpiringLicenses = async () => {
+    try {
+        const today = dayjs(); // Get today's date
+        const next30Days = today.add(30, 'days').format('YYYY-MM-DD'); // Get the date 30 days from today
+
+        // Fetch licenses expiring in the next 30 days
+        const result = await pool.query(GET_EXPIRING_LICENSES_QUERY, [
+            today.format('YYYY-MM-DD'),
+            next30Days
+        ]);
+
+        // Return the fetched rows
+        return result.rows;
+    } catch (error) {
+        console.error("❌ Error in getExpiringLicenses:", error.message);
+        throw error; // Rethrow error to be handled in the calling function
+    }
+};

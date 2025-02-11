@@ -70,4 +70,3 @@ export async function deleteAssetById(req, res) {
         handleError(res, err); 
     }
 }
-
