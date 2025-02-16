@@ -5,5 +5,6 @@ export const COUNT_QUERIES = {
     softwareassets: `SELECT COUNT(*) FROM softwareassets`,
     in_out: `SELECT COUNT(*) FROM in_out`,
     maintenance_manage: `SELECT COUNT(*) FROM maintenance_manage`,
-    userdetails: `SELECT COUNT(*) FROM "Userdetails"`
+    userdetails: `SELECT COUNT(*) FROM "Userdetails"`,
+    inuse: `SELECT COUNT(*) FROM assetmanage WHERE status='Assigned'`
 };

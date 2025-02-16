@@ -1,6 +1,9 @@
 import { findAssetById, insertAsset, updateAsset, deleteAsset } from '../services/assetServices.js';
+import { getAllAssets } from '../services/assetServices.js';
 import { handleError } from '../errorHandler/errorHandler.js';
 import { handleSuccess } from '../errorHandler/errorHandler.js';
+
+
 
 export async function getAssetById(req, res) {
     const assetId = req.params.id;
@@ -21,6 +24,28 @@ export async function getAssetById(req, res) {
         handleError(res, err);
     }
 }
+
+
+
+
+export async function getAllAssetsController(req, res) {
+    try {
+        const assets = await getAllAssets();
+
+        if (!assets || assets.length === 0) {
+            return handleError(res, new Error("No assets found"), 404, "No assets found");
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Assets retrieved successfully",
+            data: assets
+        });
+    } catch (err) {
+        handleError(res, err);
+    }
+}
+
 
 
 
