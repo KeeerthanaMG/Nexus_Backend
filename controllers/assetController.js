@@ -4,7 +4,6 @@ import { handleError } from '../errorHandler/errorHandler.js';
 import { handleSuccess } from '../errorHandler/errorHandler.js';
 
 
-
 export async function getAssetById(req, res) {
     const assetId = req.params.id;
 
@@ -25,9 +24,6 @@ export async function getAssetById(req, res) {
     }
 }
 
-
-
-
 export async function getAllAssetsController(req, res) {
     try {
         const assets = await getAllAssets();
@@ -41,9 +37,6 @@ export async function getAllAssetsController(req, res) {
         handleError(res, err);
     }
 }
-
-
-
 
 //Controller to insert a new asset
 export async function createAsset(req, res) {

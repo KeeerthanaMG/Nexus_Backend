@@ -1,6 +1,7 @@
 import { getExpiringLicenses, getPendingMaintenanceNotifications } from '../services/notificationsServices.js';
 import { sendEmailNotification } from '../services/emailService.js'; // Import email service
 import dayjs from 'dayjs';
+import { handleError } from '../errorHandler/errorHandler.js';
 
 const ASSET_MANAGER_EMAIL = "hareeshseenu95@gmail.com"; // Replace with the actual email
 
@@ -18,21 +19,20 @@ export const fetchNotifications = async (req, res) => {
             const daysLeft = expiryDate.diff(today, 'day');
 
             if (expiryDate.isAfter(today) && expiryDate.isBefore(endDate.add(1, 'day'))) {
-                const message = `⚠️ Your software license for ${license.softwarename} expires in ${daysLeft} days.`;
+                const message = `Your software license for ${license.softwarename} expires in ${daysLeft} days.`;
                 
                 notifications.push({ message, daysLeft, expiryDate: expiryDate.format('YYYY-MM-DD') });
             }
         });
 
-        // Send email if there are notifications
         if (notifications.length > 0) {
             const emailContent = notifications.map(n => n.message).join("\n");
-            await sendEmailNotification(ASSET_MANAGER_EMAIL, "⚠️ License Expiry Notification", emailContent);
+            await sendEmailNotification(ASSET_MANAGER_EMAIL, "License Expiry Notification", emailContent);
         }
 
         res.json({ success: true, notifications });
     } catch (error) {
-        console.error('❌ Error in fetchNotifications:', error.message);
+        console.error('Error in fetchNotifications:', error.message);
        return handleError(res, new Error("Error fetching notifications"), 500, "Error fetching notifications");
     }
 };
@@ -52,7 +52,7 @@ export const fetchMaintenanceNotifications = async (req, res) => {
 
             if (record.approval_status === 'Pending' && daysAfterResolution > 5) {
                 notifications.push({
-                    message: `🚨 Maintenance for Asset ${record.assetid} is still not received after ${daysAfterResolution} days.`,
+                    message: ` Maintenance for Asset ${record.assetid} is still not received after ${daysAfterResolution} days.`,
                     assetId: record.assetid,
                     daysAfterResolution,
                 });
@@ -60,7 +60,7 @@ export const fetchMaintenanceNotifications = async (req, res) => {
 
             if (record.approval_status === 'Requested' && daysAfterRequest > 5) {
                 notifications.push({
-                    message: `🚨 Asset ${record.assetid} has not been sent for maintenance after ${daysAfterRequest} days from request.`,
+                    message: ` Asset ${record.assetid} has not been sent for maintenance after ${daysAfterRequest} days from request.`,
                     assetId: record.assetid,
                     daysAfterRequest,
                 });
@@ -70,12 +70,12 @@ export const fetchMaintenanceNotifications = async (req, res) => {
         // Send email if there are maintenance notifications
         if (notifications.length > 0) {
             const emailContent = notifications.map(n => n.message).join("\n");
-            await sendEmailNotification(ASSET_MANAGER_EMAIL, "🚨 Maintenance Notifications", emailContent);
+            await sendEmailNotification(ASSET_MANAGER_EMAIL, "Maintenance Notifications", emailContent);
         }
 
         res.json({ success: true, notifications });
     } catch (error) {
-        console.error('❌ Error in fetchMaintenanceNotifications:', error.message);
+        console.error('Error in fetchMaintenanceNotifications:', error.message);
         return handleError(res, new Error("Error in fetching maintenance notifications"), 500, "Error in fetching maintenance notifications");
     }
 };

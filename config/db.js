@@ -27,10 +27,15 @@ const connectDB = async () => {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-    await pool.end();
-    console.log('Database connection closed.');
-    process.exit(0);
-});
+    try {
+        await pool.end();
+        console.log('Database connection closed.');
+    } catch (err) {
+        console.error('Error during pool shutdown:', err.message);
+    } finally {
+        process.exit(0);
+    }
+}); 
 
 // Export pool instance instead of client
 export default { pool, connectDB };

@@ -4,7 +4,7 @@ import {
     GET_SOFTWARE_BY_ID,
     INSERT_SOFTWARE,
     UPDATE_SOFTWARE,
-    DELETE_SOFTWARE
+    DELETE_SOFTWARE,
 } from '../queries/softwareQueries.js';
 
 const { pool } = db; // Extract pool from db.js
@@ -91,3 +91,5 @@ export const deleteSoftware = async (id) => {
 
     return { message: "Software asset deleted successfully" };
 };
+
+

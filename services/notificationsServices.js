@@ -6,35 +6,32 @@ import { GET_EXPIRING_LICENSES_QUERY, GET_MAINTENANCE_NOTIFICATION_QUERY } from 
 // Function to fetch licenses expiring in the next 30 days
 export const getExpiringLicenses = async () => {
     try {
-        const today = dayjs(); // Get today's date
+        const today = dayjs(); 
         const next30Days = today.add(30, 'days').format('YYYY-MM-DD'); // Get the date 30 days from today
 
-        // Fetch licenses expiring in the next 30 days
         const result = await pool.query(GET_EXPIRING_LICENSES_QUERY, [
             today.format('YYYY-MM-DD'),
             next30Days
         ]);
 
-        // Return the fetched rows
         return result.rows;
     } catch (error) {
-        console.error("❌ Error in getExpiringLicenses:", error.message);
-        throw error; // Rethrow error to be handled in the calling function
+        console.error(" Error in getExpiringLicenses:", error.message);
+        throw error; 
     }
 };
-// Date handling library
 
 
 export const getPendingMaintenanceNotifications = async () => {
     try {
-        const today = dayjs(); // Get today's date
+        const today = dayjs(); 
         const fiveDaysAgo = today.subtract(5, 'days').format('YYYY-MM-DD'); // 5 days ago from today
 
         const result = await pool.query(GET_MAINTENANCE_NOTIFICATION_QUERY, [fiveDaysAgo, fiveDaysAgo]);
 
         return result.rows;
     } catch (error) {
-        console.error("❌ Error in getPendingMaintenanceNotifications:", error.message);
+        console.error("Error in getPendingMaintenanceNotifications:", error.message);
         throw error;
     }
 };
