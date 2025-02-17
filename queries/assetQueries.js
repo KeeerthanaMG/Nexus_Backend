@@ -48,6 +48,11 @@ const queries = {
     `,
     deleteAsset: `DELETE FROM public."assetmanage" WHERE assetid = $1 RETURNING *;`,
     fetchAll: `SELECT * FROM public."assetmanage";`,
+    updateinout:`
+        UPDATE in_out 
+        SET check_in = $1 
+        WHERE assetid = $2
+    `
 };
 
 export default queries;

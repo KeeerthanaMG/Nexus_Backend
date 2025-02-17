@@ -127,12 +127,33 @@ export async function updateAsset(assetId, assetData) {
 
     try {
         const result = await pool.query(queries.updateAsset, values);
-        return result.rowCount > 0 ? result.rows[0] : null;
+
+        if (result.rowCount > 0) {
+            // If check_in is provided, update in_out table
+            if (assetData.check_in !== undefined) {
+                await updateInOutTable(assetId, assetData.check_in);
+            }
+            return result.rows[0];
+        }
+        return null;
     } catch (err) {
         console.error('Error executing updateAsset query:', err);
         throw new Error(err.message);
     }
 }
+
+// Function to update the in_out table
+async function updateInOutTable(assetId, checkInValue) {
+    const values = [checkInValue, assetId];
+
+    try {
+        await pool.query(queries.updateinout, values);
+    } catch (err) {
+        console.error('Error updating in_out table:', err);
+        throw new Error(err.message);
+    }
+}
+
 
 // Function to delete an asset
 export async function deleteAsset(assetId) {

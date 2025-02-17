@@ -36,11 +36,7 @@ export async function getAllAssetsController(req, res) {
             return handleError(res, new Error("No assets found"), 404, "No assets found");
         }
 
-        res.status(200).json({
-            success: true,
-            message: "Assets retrieved successfully",
-            data: assets
-        });
+        handleSuccess(res, assets, 200, "Asset retrieved successfully");
     } catch (err) {
         handleError(res, err);
     }
