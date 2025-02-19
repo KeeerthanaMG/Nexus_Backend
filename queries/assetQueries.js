@@ -10,6 +10,13 @@ const queries = {
                 $20, $21, $22, $23, $24)
         RETURNING *;
     `,
+
+    request:`SELECT request_id FROM in_out ORDER BY request_id DESC LIMIT 1`,
+
+    insertInOut:` 
+        INSERT INTO public.in_out (request_id, assetid, user_id, check_out, check_in)
+        VALUES ($1, $2, $3, $4, $5)
+                `,
     updateAsset: `
         UPDATE public."assetmanage"
         SET 
@@ -40,6 +47,12 @@ const queries = {
         RETURNING *;
     `,
     deleteAsset: `DELETE FROM public."assetmanage" WHERE assetid = $1 RETURNING *;`,
+    fetchAll: `SELECT * FROM public."assetmanage";`,
+    updateinout:`
+        UPDATE in_out 
+        SET check_in = $1 
+        WHERE assetid = $2
+    `
 };
 
 export default queries;

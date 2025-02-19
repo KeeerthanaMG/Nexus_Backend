@@ -14,43 +14,87 @@ export async function findAssetById(assetId) {
     }
 }
 
+export async function getAllAssets() {
+    try {
+        const result = await db.pool.query(queries.fetchAll); // Adjust table name if needed
+        return result.rows;
+    } catch (error) {
+        console.error("❌ Error fetching assets:", error.message);
+        throw error;
+    }
+}
+
 // Function to add an asset
 export async function insertAsset(assetData) {
-    const values = [
-        assetData.assetid,
-        assetData.assettype,
-        assetData.make || null,
-        assetData.productid || null,
-        assetData.purchasedate || null,
-        assetData.retailer || null,
-        assetData.warrantyexpiry || null,
-        assetData.assigneduserid || null,
-        assetData.location || null,
-        assetData.status || null,
-        assetData.lastcheckoutdate || null,
-        assetData.size || null,
-        assetData.operatingsystem || null,
-        assetData.typeofos || null,
-        assetData.productkey || null,
-        assetData.processor || null,
-        assetData.ram || null,
-        assetData.harddisktype || null,
-        assetData.harddisksize || null,
-        assetData.harddiskmodel || null,
-        assetData.resolution || null,
-        assetData.graphicscardmodel || null,
-        assetData.externaldongledetails || null,
-        assetData.check_in || null,
-    ];
+    let status = assetData.status || null;
+
+    // Determine asset status
 
     try {
-        const result = await pool.query(queries.insertAsset, values);
-        return result.rows[0];
+        
+        const requestResult = await pool.query(
+            queries.request
+        );
+
+        let newRequestId = "REQ-1"; // Default for the first entry
+
+        if (requestResult.rows.length > 0) {
+            const lastRequestId = requestResult.rows[0].request_id; // Example: "REQ-17"
+            const lastNumber = parseInt(lastRequestId.split('-')[1], 10); // Extracts 17
+            newRequestId = `REQ-${lastNumber + 1}`; // Generates "REQ-18"
+        }
+
+    
+        const assetValues = [
+            assetData.assetid,
+            assetData.assettype,
+            assetData.make || null,
+            assetData.productid || null,
+            assetData.purchasedate || null,
+            assetData.retailer || null,
+            assetData.warrantyexpiry || null,
+            assetData.assigneduserid || null,
+            assetData.location || null,
+            assetData.status || null, // Updated status
+            assetData.lastcheckoutdate || null,
+            assetData.size || null,
+            assetData.operatingsystem || null,
+            assetData.typeofos || null,
+            assetData.productkey || null,
+            assetData.processor || null,
+            assetData.ram || null,
+            assetData.harddisktype || null,
+            assetData.harddisksize || null,
+            assetData.harddiskmodel || null,
+            assetData.resolution || null,
+            assetData.graphicscardmodel || null,
+            assetData.externaldongledetails || null,
+            assetData.check_in || null,
+        ];
+
+        const assetResult = await pool.query(queries.insertAsset, assetValues);
+        const insertedAsset = assetResult.rows[0];
+
+        if (assetData.lastcheckoutdate && !assetData.check_in) {
+            const inOutValues = [
+                newRequestId, // Correctly generated request_id
+                assetData.assetid,
+                assetData.assigneduserid,
+                assetData.lastcheckoutdate,
+                assetData.check_in, // check_in is NULL
+            ];
+
+            await pool.query(queries.insertInOut, inOutValues);
+        }
+
+        return insertedAsset;
     } catch (err) {
         console.error('Error inserting asset:', err);
         throw new Error(err.message);
     }
 }
+
+
 
 // Function to update an asset
 export async function updateAsset(assetId, assetData) {
@@ -83,12 +127,33 @@ export async function updateAsset(assetId, assetData) {
 
     try {
         const result = await pool.query(queries.updateAsset, values);
-        return result.rowCount > 0 ? result.rows[0] : null;
+
+        if (result.rowCount > 0) {
+            // If check_in is provided, update in_out table
+            if (assetData.check_in !== undefined) {
+                await updateInOutTable(assetId, assetData.check_in);
+            }
+            return result.rows[0];
+        }
+        return null;
     } catch (err) {
         console.error('Error executing updateAsset query:', err);
         throw new Error(err.message);
     }
 }
+
+// Function to update the in_out table
+async function updateInOutTable(assetId, checkInValue) {
+    const values = [checkInValue, assetId];
+
+    try {
+        await pool.query(queries.updateinout, values);
+    } catch (err) {
+        console.error('Error updating in_out table:', err);
+        throw new Error(err.message);
+    }
+}
+
 
 // Function to delete an asset
 export async function deleteAsset(assetId) {

@@ -14,7 +14,6 @@ const pool = new Pool({
     database: process.env.DB_NAME,
 });
 
-// Connect to PostgreSQL (optional)
 const connectDB = async () => {
     try {
         const client = await pool.connect();
