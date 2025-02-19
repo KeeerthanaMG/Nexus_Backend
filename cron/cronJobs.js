@@ -4,7 +4,8 @@ import { fetchNotifications, fetchMaintenanceNotifications } from '../controller
 console.log("🔄 Scheduled tasks started!");
 
 // Run every day at 9 AM
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 9 * * *', async () => {
+
     try {
         console.log("🔔 Running notification checks...");
         await fetchNotifications(); // License expiry notifications

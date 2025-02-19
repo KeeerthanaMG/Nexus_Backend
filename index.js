@@ -11,6 +11,7 @@ import maintenanceRoutes from './routes/maintenanceRoutes.js';
 import countRoutes from './routes/countRoutes.js';
 
 
+
 _config();  // Load environment variables
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/count', countRoutes);
+
 
 
 // Start Server

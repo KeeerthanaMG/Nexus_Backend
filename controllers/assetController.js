@@ -41,13 +41,24 @@ export async function getAllAssetsController(req, res) {
 //Controller to insert a new asset
 export async function createAsset(req, res) {
     try {
+        // Log the received data for debugging
+        console.log('Received asset data:', req.body);
+
+        // Call insertAsset to insert the new asset into the database
         const newAsset = await insertAsset(req.body);
+
+        // Respond with success message and the new asset data
         handleSuccess(res, newAsset, 201, "Asset added successfully");
     } catch (err) {
+        // Log the error with more context for better debugging
         console.error('Error adding asset:', err.message);
-        handleError(res, err);
+        console.error('Error details:', err.stack);  // Logs the stack trace for deeper insight
+
+        // Send a more detailed error response
+        handleError(res, { message: 'Failed to add asset', details: err.message }, 500);
     }
 }
+
 
 
 //update an asset

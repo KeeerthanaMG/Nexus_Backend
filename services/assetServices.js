@@ -26,74 +26,57 @@ export async function getAllAssets() {
 
 // Function to add an asset
 export async function insertAsset(assetData) {
-    let status = assetData.status || null;
-
-    // Determine asset status
-
     try {
-        
-        const requestResult = await pool.query(
-            queries.request
-        );
+        // Ensure we're correctly accessing the first element in the `data` array
+        const asset = assetData.data[0]; // Access the first object from the `data` array
+        console.log("Inserting asset data:", asset);
 
-        let newRequestId = "REQ-1"; // Default for the first entry
-
-        if (requestResult.rows.length > 0) {
-            const lastRequestId = requestResult.rows[0].request_id; // Example: "REQ-17"
-            const lastNumber = parseInt(lastRequestId.split('-')[1], 10); // Extracts 17
-            newRequestId = `REQ-${lastNumber + 1}`; // Generates "REQ-18"
+        // Check if assetId is provided and throw an error if not
+        if (!asset.assetId) {
+            throw new Error("Asset ID is required");
         }
 
-    
         const assetValues = [
-            assetData.assetid,
-            assetData.assettype,
-            assetData.make || null,
-            assetData.productid || null,
-            assetData.purchasedate || null,
-            assetData.retailer || null,
-            assetData.warrantyexpiry || null,
-            assetData.assigneduserid || null,
-            assetData.location || null,
-            assetData.status || null, // Updated status
-            assetData.lastcheckoutdate || null,
-            assetData.size || null,
-            assetData.operatingsystem || null,
-            assetData.typeofos || null,
-            assetData.productkey || null,
-            assetData.processor || null,
-            assetData.ram || null,
-            assetData.harddisktype || null,
-            assetData.harddisksize || null,
-            assetData.harddiskmodel || null,
-            assetData.resolution || null,
-            assetData.graphicscardmodel || null,
-            assetData.externaldongledetails || null,
-            assetData.check_in || null,
+            asset.assetId,
+            asset.assetType,
+            asset.make || null,
+            asset.productId || null,
+            asset.purchaseDate || null,
+            asset.retailer || null,
+            asset.warrantyExpiry || null,
+            asset.assignedUserId || null,
+            asset.location || null,
+            asset.status || null, 
+            asset.lastCheckoutDate || null,
+            asset.size || null,
+            asset.operatingSystem || null,
+            asset.typeOfOS || null,
+            asset.productKey || null,
+            asset.processor || null,
+            asset.ram || null,
+            asset.hardDiskType || null,
+            asset.hardDiskSize || null,
+            asset.hardDiskModel || null,
+            asset.resolution || null,
+            asset.graphicsCardModel || null,
+            asset.externalDongleDetails || null,
+            asset.check_in || null,
         ];
 
+        // Log the query before running it
+        console.log('Executing query with values:', assetValues);
+
+        // Assuming queries.insertAsset is your query to insert the asset
         const assetResult = await pool.query(queries.insertAsset, assetValues);
-        const insertedAsset = assetResult.rows[0];
 
-        if (assetData.lastcheckoutdate && !assetData.check_in) {
-            const inOutValues = [
-                newRequestId, // Correctly generated request_id
-                assetData.assetid,
-                assetData.assigneduserid,
-                assetData.lastcheckoutdate,
-                assetData.check_in, // check_in is NULL
-            ];
+        console.log('Asset inserted:', assetResult.rows);
 
-            await pool.query(queries.insertInOut, inOutValues);
-        }
-
-        return insertedAsset;
+        return assetResult.rows[0];
     } catch (err) {
-        console.error('Error inserting asset:', err);
-        throw new Error(err.message);
+        console.error('Error inserting asset:', err.message);
+        throw new Error(err.message);  // Re-throw the error to be handled in the controller
     }
 }
-
 
 
 // Function to update an asset
