@@ -13,8 +13,8 @@ const queries = {
 
     request:`SELECT request_id FROM in_out ORDER BY request_id DESC LIMIT 1`,
 
-    insertInOut:` 
-        INSERT INTO public.in_out (request_id, assetid, user_id, check_out, check_in)
+    disposeAsset:` 
+        INSERT INTO public.disposal (request_id, assetid, user_id, check_out, check_in)
         VALUES ($1, $2, $3, $4, $5)
                 `,
     updateAsset: `
