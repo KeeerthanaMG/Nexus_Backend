@@ -8,7 +8,10 @@ const inoutServices = {
     insertInOutAfterAssetInsert: async (assetId, userId, checkIn, checkOut) => {
         try {
             // If checkOut is provided but checkIn is not, insert NULL for checkIn
-            checkIn = checkOut ? null : checkIn;
+            console.log(checkIn,"CheckIn")
+            checkIn = checkIn && checkIn != "false" ? checkIn : null;
+            checkOut = checkOut && checkOut != "false" ? checkOut : null;
+            console.log("🔍 Cleaned values for InOut insert:", { checkIn, checkOut });
 
             const result = await pool.query(inoutQueries.insertInOut, [
                 assetId,

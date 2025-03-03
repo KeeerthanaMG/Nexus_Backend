@@ -93,20 +93,22 @@ export async function updateAsset(assetId, assetData) {
     try {
         console.log("📤 Updating Asset ID:", assetId);
 
-        // ✅ Check if asset exists before updating
+        // ✅ Ensure asset exists before updating
         const existingAsset = await findAssetById(assetId);
         if (!existingAsset) {
             throw new Error(`❌ Asset Not Found: ${assetId}`);
         }
 
-        // ✅ Dynamically build update fields based on provided data
+        const { isCheckoutAgain, ...updateData } = assetData; 
+
+        // ✅ Validate and filter fields dynamically
         const updateFields = [];
         const values = [];
         let valueIndex = 1;
 
-        for (const [key, value] of Object.entries(assetData)) {
-            if (value !== undefined) { // Only update fields with provided values
-                updateFields.push(`${key} = $${valueIndex}`);
+        for (const [key, value] of Object.entries(updateData)) {
+            if (value !== undefined) { // Only include fields with valid values
+                updateFields.push(`"${key}" = $${valueIndex}`); // Enclose column names in quotes to avoid SQL errors
                 values.push(value);
                 valueIndex++;
             }
@@ -116,10 +118,15 @@ export async function updateAsset(assetId, assetData) {
             throw new Error("❌ No valid fields provided for update.");
         }
 
-        values.push(assetId); // Last value is always assetId
-        const query = `UPDATE public."assetmanage" SET ${updateFields.join(", ")} WHERE assetid = $${valueIndex} RETURNING *`;
+        values.push(assetId); // Last value must be assetId
+        const query = `
+            UPDATE public."assetmanage"
+            SET ${updateFields.join(", ")}
+            WHERE assetid = $${valueIndex}
+            RETURNING *;
+        `;
 
-        console.log("🚀 Executing Dynamic UPDATE Query:", query);
+        console.log("🚀 Executing UPDATE Query:", query);
         console.log("📊 Values for Query:", values);
 
         const result = await pool.query(query, values);
@@ -131,19 +138,18 @@ export async function updateAsset(assetId, assetData) {
         console.log(`✅ Asset Updated Successfully: ${assetId}`, result.rows[0]);
 
         // 🔄 Handle InOut table updates
-        if (assetData.check_in && assetData.lastcheckoutdate) {
+        if (isCheckoutAgain) {
             console.log(`🔄 Inserting into InOut table for Asset ID: ${assetId}`);
             await inoutServices.insertInOutAfterAssetInsert(
                 assetId,
                 assetData.assigneduserid,
-                assetData.lastcheckoutdate,  
-                assetData.check_in           
+                assetData.check_in,
+                assetData.lastcheckoutdate,  // Previous checkout date           // New check-in date
             );
-        } else if (assetData.check_in) {
+        } else if (!assetData.check_in) {
             console.log(`🔄 Updating InOut table for Asset ID: ${assetId}`);
             await inoutServices.updateCheckOut(
-                assetData.check_in,
-                assetData.lastcheckoutdate || existingAsset.lastcheckoutdate,
+                assetData.check_in,  // Corrected parameter order
                 assetId
             );
         }
@@ -158,6 +164,7 @@ export async function updateAsset(assetId, assetData) {
         throw new Error(err.message);
     }
 }
+
 
 
 
