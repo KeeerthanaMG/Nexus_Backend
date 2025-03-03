@@ -87,14 +87,11 @@ export async function insertAsset(assetData) {
         throw new Error(err.message);
     }
 }
-
-
 // Function to update an asset
 
 export async function updateAsset(assetId, assetData) {
     try {
         console.log("📤 Updating Asset ID:", assetId);
-        console.log("📦 Incoming Update Data:", JSON.stringify(assetData, null, 2));
 
         // ✅ Check if asset exists before updating
         const existingAsset = await findAssetById(assetId);
@@ -120,7 +117,6 @@ export async function updateAsset(assetId, assetData) {
         }
 
         values.push(assetId); // Last value is always assetId
-
         const query = `UPDATE public."assetmanage" SET ${updateFields.join(", ")} WHERE assetid = $${valueIndex} RETURNING *`;
 
         console.log("🚀 Executing Dynamic UPDATE Query:", query);
@@ -134,15 +130,22 @@ export async function updateAsset(assetId, assetData) {
 
         console.log(`✅ Asset Updated Successfully: ${assetId}`, result.rows[0]);
 
-        // 🔄 Update InOut table if check_in is provided
-        if (assetData.check_in) {
+        // 🔄 Handle InOut table updates
+        if (assetData.check_in && assetData.lastcheckoutdate) {
+            console.log(`🔄 Inserting into InOut table for Asset ID: ${assetId}`);
+            await inoutServices.insertInOutAfterAssetInsert(
+                assetId,
+                assetData.assigneduserid,
+                assetData.lastcheckoutdate,  
+                assetData.check_in           
+            );
+        } else if (assetData.check_in) {
             console.log(`🔄 Updating InOut table for Asset ID: ${assetId}`);
             await inoutServices.updateCheckOut(
-                assetData.check_in,  
-                assetData.lastcheckoutdate || existingAsset.lastcheckoutdate, 
+                assetData.check_in,
+                assetData.lastcheckoutdate || existingAsset.lastcheckoutdate,
                 assetId
             );
-            
         }
 
         return {
