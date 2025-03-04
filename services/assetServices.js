@@ -93,15 +93,20 @@ export async function updateAsset(assetId, assetData) {
     try {
         console.log("📤 Updating Asset ID:", assetId);
 
-        // ✅ Ensure asset exists before updating
         const existingAsset = await findAssetById(assetId);
         if (!existingAsset) {
             throw new Error(`❌ Asset Not Found: ${assetId}`);
         }
 
-        const { isCheckoutAgain, ...updateData } = assetData; 
+        const isCheckoutAgain = assetData.isCheckoutAgain ?? false;
+        const isCheckinAgain = assetData.isCheckinAgain ?? false;
 
-        // ✅ Validate and filter fields dynamically
+        console.log(isCheckinAgain);
+        console.log(isCheckoutAgain);
+
+        const updateData = { ...assetData };
+        delete updateData.isCheckoutAgain;
+        delete updateData.isCheckinAgain;
         const updateFields = [];
         const values = [];
         let valueIndex = 1;
@@ -144,12 +149,13 @@ export async function updateAsset(assetId, assetData) {
                 assetId,
                 assetData.assigneduserid,
                 assetData.check_in,
-                assetData.lastcheckoutdate,  // Previous checkout date           // New check-in date
+                assetData.lastcheckoutdate  
             );
-        } else if (!assetData.check_in) {
+        } if (isCheckinAgain){
             console.log(`🔄 Updating InOut table for Asset ID: ${assetId}`);
             await inoutServices.updateCheckOut(
-                assetData.check_in,  // Corrected parameter order
+                assetData.check_in,
+                assetData.lastcheckoutdate,  // Corrected parameter order
                 assetId
             );
         }
@@ -164,9 +170,6 @@ export async function updateAsset(assetId, assetData) {
         throw new Error(err.message);
     }
 }
-
-
-
 
 // Function to delete an asset
 export async function deleteAsset(assetId) {
