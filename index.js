@@ -9,9 +9,11 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import './cron/cronJobs.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
 import countRoutes from './routes/countRoutes.js';
+import disposalRoutes from './routes/disposalRoutes.js'
+//import inoutRoutes from './routes/inoutRoutes.js'
+ 
 
-
-_config(); 
+_config();  
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,9 +31,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/count', countRoutes);
-
+app.use("/api", disposalRoutes);
+//app.use("/api",inoutRoutes)
 
 
 app.listen(port, () => {
-    console.log(`Server running on port http://localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
 });
