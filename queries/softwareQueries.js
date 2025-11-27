@@ -38,3 +38,5 @@ RETURNING softwareid;
 export const DELETE_SOFTWARE = `
     DELETE FROM softwareassets WHERE softwareid = $1 RETURNING softwareid;
 `;
+
+
